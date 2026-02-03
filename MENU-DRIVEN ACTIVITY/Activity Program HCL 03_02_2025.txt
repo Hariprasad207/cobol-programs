@@ -1,0 +1,93 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. NUMBERMENU.
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01  WS-CHOICE        PIC 9 VALUE 0.
+01  WS-NUMBER        PIC 9(5).
+01  WS-TEMP          PIC 9(5).
+01  WS-REVERSE       PIC 9(5).
+01  WS-DIGIT         PIC 9.
+01  WS-SUM           PIC 9(7).
+01  WS-I             PIC 9(5).
+01  WS-EXIT-FLAG     PIC X VALUE 'N'.
+
+PROCEDURE DIVISION.
+MAIN-PARA.
+
+   DISPLAY "Enter number: "
+   ACCEPT WS-NUMBER
+   PERFORM UNTIL WS-EXIT-FLAG = 'Y'
+       PERFORM DISPLAY-MENU
+       ACCEPT WS-CHOICE
+       EVALUATE WS-CHOICE
+           WHEN 1
+               PERFORM PALINDROME-CHECK
+           WHEN 2
+               PERFORM ARMSTRONG-CHECK
+           WHEN 3
+               PERFORM PERFECT-CHECK
+           WHEN 4
+               MOVE 'Y' TO WS-EXIT-FLAG
+           WHEN OTHER
+               DISPLAY "Invalid Option"
+       END-EVALUATE
+   END-PERFORM
+   STOP RUN.
+
+DISPLAY-MENU.
+   DISPLAY "--------------------------"
+   DISPLAY "1. Check Palindrome Number"
+   DISPLAY "2. Check Armstrong Number"
+   DISPLAY "3. Check Perfect Number"
+   DISPLAY "4. Exit"
+   DISPLAY "Enter your choice: ".
+
+PALINDROME-CHECK.
+   MOVE WS-NUMBER TO WS-TEMP
+   MOVE 0 TO WS-REVERSE
+
+   PERFORM UNTIL WS-TEMP = 0
+       COMPUTE WS-DIGIT = FUNCTION MOD(WS-TEMP 10)
+       COMPUTE WS-REVERSE = WS-REVERSE * 10 + WS-DIGIT
+       COMPUTE WS-TEMP = WS-TEMP / 10
+   END-PERFORM
+
+   IF WS-REVERSE = WS-NUMBER
+       DISPLAY "*********Palindrome Number**********"
+   ELSE
+       DISPLAY "***********Not a Palindrome Number*********"
+   END-IF.
+
+ARMSTRONG-CHECK.
+   MOVE WS-NUMBER TO WS-TEMP
+   MOVE 0 TO WS-SUM
+
+   PERFORM UNTIL WS-TEMP = 0
+       COMPUTE WS-DIGIT = FUNCTION MOD(WS-TEMP 10)
+       COMPUTE WS-SUM =
+           WS-SUM + (WS-DIGIT * WS-DIGIT * WS-DIGIT)
+       COMPUTE WS-TEMP = WS-TEMP / 10
+   END-PERFORM
+
+   IF WS-SUM = WS-NUMBER
+       DISPLAY "***************Armstrong Number************"
+   ELSE
+       DISPLAY "***************Not an Armstrong Number*************"
+   END-IF.
+
+PERFECT-CHECK.
+   MOVE 0 TO WS-SUM
+
+   PERFORM VARYING WS-I FROM 1 BY 1
+       UNTIL WS-I >= WS-NUMBER
+       IF FUNCTION MOD(WS-NUMBER WS-I) = 0
+           ADD WS-I TO WS-SUM
+       END-IF
+   END-PERFORM.
+   
+   IF WS-SUM = WS-NUMBER
+       DISPLAY "*********Perfect Number***********"
+   ELSE
+       DISPLAY "**********Not a Perfect Number**********"
+   END-IF.
