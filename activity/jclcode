@@ -1,0 +1,15 @@
+ //Z71120 JOB 'ACCT','COBOL COMPILER',CLASS=A,MSGCLASS=X,          
+ //         TIME=(0,5),NOTIFY=&SYSUID                              
+ //*         SET VARIABLE                                          
+ // SET MEMBER=MOCKJCL                                             
+ // SET SOURCE=Z71120.HARI.COBOL                                   
+ // SET LOAD=Z71120.HARI.LOADLIB                                   
+ //*       COMPILE+EDIT                                            
+ //STEP01      EXEC PROC=IGYWCL                                    
+ //COBOL.SYSIN DD DSN=&SOURCE(&MEMBER),DISP=SHR                    
+ //LKED.SYSLMOD DD DSN=&LOAD(&MEMBER),DISP=SHR                     
+ //*       RUN PROGRAM                                             
+ //STEP02      EXEC PGM=&MEMBER                                    
+ //STEPLIB     DD DSN=&LOAD,DISP=SHR                               
+ //SYSOUT      DD SYSOUT=*                                         
+ //SYSPRINT    DD SYSOUT=*                                         

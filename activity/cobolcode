@@ -1,0 +1,72 @@
+          IDENTIFICATION DIVISION.                                  
+          PROGRAM-ID PROJECT.                                       
+                                                                    
+          ENVIRONMENT DIVISION.                                     
+          INPUT-OUTPUT SECTION.                                     
+          FILE-CONTROL.                                             
+             SELECT DATA-IN ASSIGN TO INFILE                        
+             ORGANIZATION IS INDEXED                                
+             ACCESS MODE IS SEQUENTIAL                              
+             RECORD KEY IS ACCT-NO                                  
+             FILE STATUS IS WS-FS.                                  
+                                                                    
+          DATA DIVISION.                                            
+          FILE SECTION.                                             
+          FD ACCT-MASTER.                                           
+          01 DATA-IN.                                               
+                        05 ACCT-NO       PIC X(10).                                
+              05 ACCT-TYPE     PIC X.                                    
+              05 ACCT-STATUS   PIC X.                                    
+              05 ACCT-BAL      PIC 9(7)V99.                              
+              05 ACCT-NAME     PIC A(30).                                
+          WORKING-STORAGE SECTION.                                       
+          01 WS-FS           PIC XX VALUE '00'.                          
+          01 WS-EOF          PIC X VALUE 'N'.                            
+          01 WS-MIN-CUR      PIC 9(4) VALUE 5000.                        
+          01 WS-MIN-SAV      PIC 9(4) VALUE 1000.                        
+          01 WS-PENALTY      PIC 9(3).                                   
+          01 WS-APP-PEN      PIC 9(2) VALUE 00.                          
+          01 WS-CHECK        PIC 9(2) VALUE 00.                          
+                                                                         
+          PROCEDURE DIVISION.                                            
+              OPEN I-O DATA-IN.                                          
+              PERFORM UNTIL WS-EOF= 'Y'                                  
+                              READ DATA-IN                                
+                AT END MOVE 'Y' TO WS-EOF                   
+                NOT AT END ADD 1 TO WS-CHECK                
+                 IF ACCT-STATUS = 'A'                       
+                   IF ACCT-TYPE = 'C'                       
+                     IF BALANCE >= WS-MIN-CUR               
+                       CONTINUE                             
+                     ELSE                                   
+                       ADD 250 TO WS-PENALTY                
+                       IF BALANCE < 250                     
+                         MOVE 'I' TO ACCT-STATUS            
+                       END-IF                               
+                       SUBTRACT 250 FROM ACCT-BAL           
+                       ADD 1 TO WS-APP-PEM                  
+                       REWRITE INREC                        
+                     END-IF                                 
+                   ELSE                                     
+                                        ADD 250 TO WS-PENALTY                               
+                     IF ACCT-BAL < 250                                   
+                       MOVE 'I; TO ACCT-STATUS                           
+                     END-IF                                              
+                     SUBTRACT 250 FROM ACCT-BAL                          
+                     ADD 1 TO WS-APP-PEN                                 
+                     REWRITE INREC                                       
+                   END-IF                                                
+                  END-IF                                                 
+                  ELSE                                                   
+                    DISPLAY 'ACCOUTN NOT FOUND'                          
+                  END-IF                                                 
+                END-READ                                                 
+                END-PERFORM.                                             
+                DISPLAY '----------MIN BALANCE SUMMARY----------'.       
+                DISPLAY 'ACCOUNT CHECKED: 'WS-CHECKED.                   
+                DISPLAY 'PENALTIES APPLIED: 'WS-APP-PEN.                 
+                DISPLAY 'TOTAL PENALTY: 'WS-PENALTY.                
+                DISPLAY 'SHORT SUMMARY COMPLETED SUCCESSFULLY...'.  
+                DISPLAY '---------------------------------------'.  
+                CLOSE DATA-IN.                                      
+                STOP RUN.                                           

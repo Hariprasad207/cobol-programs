@@ -1,0 +1,28 @@
+ //VSAMCRE JOB 'ACCT','CREATE VSM',TIME=(1,0),NOTIFY=&SYSUID,CLASS=A     
+ //STEP00 EXEC PGM=IDCAMS                                                
+ //SYSPRINT DD SYSOUT=*                                                  
+ //SYSIN DD *                                                            
+   DELETE Z71120.HARI.KSDS CLUSTER                                       
+ /*                                                                      
+ //STEP01 EXEC PGM=IDCAMS                                                
+ //SYSOUT DD SYSOUT=*                                                    
+ //SYSPRINT DD SYSOUT=*                                                  
+ //SYSIN DD *                                                            
+     DEFINE CLUSTER(NAME(Z71120.HARI.KSDS) -                             
+     INDEXED   -                                                         
+     KEY(10,0)         -                                                 
+     RECORDSIZE(51,51) -                                                 
+     CISZ(4096)        -                                                 
+     TRACKS(5,5)   -                                                     
+          FREESPACE(3 3)) -                                           
+     DATA(NAME(Z71120.HARI.KSDS.DATA)) -                         
+           INDEX(NAME(Z71120.HARI.KSDS.INDEX))                   
+ /*                                                              
+ //STEP2 EXEC PGM=IDCAMS                                         
+ //SYSPRINT DD SYSOUT=*                                          
+ //INPUT  DD DSN=Z71120.HARI.INPUT,DISP=SHR                      
+ //OUTPUT DD DSN=Z71120.HARI.KSDS,DISP=SHR                       
+ //SYSIN  DD *                                                   
+     REPRO INFILE(INPUT)-                                        
+     OUTFILE(OUTPUT)                                             
+ /*                                                              
